@@ -14,19 +14,20 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repositories.UsersRepository;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MyUserDetailsService implements UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UsersRepository usersRepository;
 
+    private final RoleService roleService;
+
     @Autowired
-    public MyUserDetailsService(UsersRepository usersRepository) {
+    public UserServiceImpl(UsersRepository usersRepository, RoleService roleService) {
         this.usersRepository = usersRepository;
+        this.roleService = roleService;
     }
 
     public PasswordEncoder bCryptPasswordEncoder() {
@@ -57,6 +58,14 @@ public class MyUserDetailsService implements UserDetailsService {
     @Transactional
     public void delete(long id) {
         usersRepository.deleteById(id);
+    }
+
+    public Set<Role> getSetOfRoles(List<String> rolesId){
+        Set<Role> roleSet = new HashSet<>();
+        for (String id: rolesId) {
+            roleSet.add(roleService.getRoleById(Long.parseLong(id)));
+        }
+        return roleSet;
     }
 
 
