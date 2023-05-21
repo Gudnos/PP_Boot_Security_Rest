@@ -28,10 +28,6 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "role - " + role;
-    }
-
-    public String getNoPrefix() {
         String prefix = "ROLE_";
         return role.substring(prefix.length());
     }

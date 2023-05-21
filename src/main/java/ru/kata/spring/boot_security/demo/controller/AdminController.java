@@ -11,6 +11,7 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -33,15 +34,18 @@ public class AdminController {
     }
 
     @GetMapping
-    public String users(Model model) {
+    public String users(Model model, Principal principal) {
+        model.addAttribute("roleList", roleService.listRoles());
+        model.addAttribute("formUser", new User());
         model.addAttribute("users", userService.findAll());
-        return "all-users";
+        model.addAttribute("user", userService.findByUsername(principal.getName()));
+        return "all-users_bootstrap";
     }
 
     @GetMapping("create")
     public String createUserForm(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("roleList", roleService.listRoles());
-        return "create";
+        return "all-users_bootstrap";
     }
 
     @PostMapping("create")
@@ -60,10 +64,10 @@ public class AdminController {
 
     @GetMapping("update/{id}")
     public String updateUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userService.findOne(id);
-        model.addAttribute("user", user);
+        User updateUser = userService.findOne(id);
+        model.addAttribute("updateUser", updateUser);
         model.addAttribute("roleList", roleService.listRoles());
-        return "update";
+        return "all-users_bootstrap";
     }
 
     @PutMapping("update")
